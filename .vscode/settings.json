@@ -1,0 +1,12 @@
+{
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.autopep8",
+      "editor.rulers": [72, 79],
+      "editor.formatOnSave": true
+    },
+    "python.testing.pytestArgs": [
+      "lml_python"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}
