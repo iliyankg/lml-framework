@@ -5,7 +5,7 @@ from tensor import Tensor
 def tdot(a: Tensor,
          b: Tensor,
          axes: int | tuple[tuple[int, ...], tuple[int, ...]],
-         out: Tensor = None):
+         out: Tensor):
     # TODO: Next
     # Process the axes and ensure they are in the expected shape
     # Validate input tensor shapes are compatible
