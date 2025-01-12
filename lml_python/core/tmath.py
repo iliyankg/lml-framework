@@ -1,10 +1,10 @@
 from typing import Optional
-from tensor import Tensor
+from tensor import Tensor, _TensorShape
 
 
 def tdot(a: Tensor,
          b: Tensor,
-         axes: int | tuple[tuple[int, ...], tuple[int, ...]],
+         axes: int | tuple[_TensorShape, _TensorShape],
          out: Tensor):
     # TODO: Next
     # Process the axes and ensure they are in the expected shape
