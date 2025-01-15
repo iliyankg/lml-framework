@@ -42,6 +42,8 @@ def matmul(a: Tensor, b: Tensor, out: Optional[Tensor] = None) -> Tensor:
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
             for k in range(b.shape[1]):
+                # TODO: Replace this with actual dot product function call
+                # Consider how to obtain iterators to non contiguous data
                 out[i, k] += a[i, j] * b[j, k]
 
     return out
