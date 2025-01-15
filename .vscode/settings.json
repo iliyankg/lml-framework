@@ -2,7 +2,7 @@
     "[python]": {
       "editor.defaultFormatter": "ms-python.autopep8",
       "editor.rulers": [72, 79],
-      "editor.formatOnSave": true
+      "editor.formatOnSave": true,
     },
     "python.testing.pytestArgs": [
       "lml_python"
