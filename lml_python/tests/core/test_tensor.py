@@ -1,4 +1,5 @@
 import pytest
+import math
 from lml_python.core.tensor import Tensor
 
 # TODO: Restructure this fixtures for redability, re-use and parametrization
@@ -93,6 +94,12 @@ def test_tensor_with_iterable(tensor_data):
     assert tensor.shape == shape
 
 
+def test_tensor_getitem(tensor_data):
+    data, shape, _, _, _, indices, expected = tensor_data
+    tensor = Tensor.with_list(data, shape)
+    assert tensor[*indices] == expected
+
+
 def test_tensor_with_zeros():
     shape = (2, 3)
     tensor = Tensor.with_zeros(shape)
@@ -117,7 +124,21 @@ def test_tensor_with_uniform(shape, uniform_range):
                for value in tensor.data)
 
 
-def test_tensor_getitem(tensor_data):
-    data, shape, _, _, _, indices, expected = tensor_data
-    tensor = Tensor.with_list(data, shape)
-    assert tensor[*indices] == expected
+@pytest.mark.parametrize("initial_shape, new_shape, old_index, new_index", [
+    ((2, 3), (3, 2), (0, 2), (1, 0)),
+    ((3, 3), (1, 9), (1, 1), (0, 4)),
+    ((4, 1), (2, 2), (2, 0), (1, 0)),
+    ((2, 2, 2), (4, 2), (1, 0, 1), (2, 1)),
+])
+def test_tensor_reshape_various_shapes(initial_shape,
+                                       new_shape,
+                                       old_index,
+                                       new_index):
+    tensor = Tensor.with_uniform(initial_shape, (0.0, 1.0))
+    val = tensor[old_index]
+    reshaped_tensor = tensor.reshape(new_shape)
+    reshaped_val = reshaped_tensor[new_index]
+    assert reshaped_val == val
+    assert reshaped_tensor.shape == new_shape
+    assert reshaped_tensor.data == tensor.data
+    assert math.prod(reshaped_tensor.shape) == math.prod(initial_shape)

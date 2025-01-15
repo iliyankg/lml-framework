@@ -30,17 +30,26 @@ class Tensor(object):
         self.data = data
         self.shape = shape
         self.rank = len(shape)
-        self.strides = [1] * self.rank
-
-        for i in range(1, self.rank):
-            prev_dim = self.shape[self.rank-i]
-            prev_stride = self.strides[self.rank-i]
-            # reverse order the strides for row-major order
-            self.strides[self.rank-i-1] = prev_stride * prev_dim
+        self.strides = self._calculate_strides(shape)
 
     def __getitem__(self, key: _TensorTarget) -> float:
         assert len(self.shape) == len(key)
+        fi = self._flat_idx(key)
+        if fi >= len(self.data):
+            raise IndexError("Index out of bounds")
         return self.data[self._flat_idx(key)]
+
+    def __setitem__(self, key: _TensorTarget, value: float):
+        assert len(self.shape) == len(key)
+        fi = self._flat_idx(key)
+        if fi >= len(self.data):
+            raise IndexError("Index out of bounds")
+        self.data[self._flat_idx(key)] = value
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Tensor):
+            return NotImplemented
+        return self.data == other.data and self.shape == other.shape
 
     def __repr__(self) -> str:
         return f"""Tensor(
@@ -49,6 +58,23 @@ class Tensor(object):
     strides={self.strides},
     data={self.data})
 """
+
+    def reshape(self, shape: _TensorShape) -> 'Tensor':
+        """Reshape the tensor
+
+        Args:
+            shape (_TensorShape): New shape for the tensor
+
+        Returns:
+            Tensor: Newly reshaped tensor
+        """
+        if math.prod(shape) != math.prod(self.shape):
+            raise ValueError("New shape must have the same number of elements")
+
+        self.shape = shape
+        self.rank = len(shape)
+        self.strides = self._calculate_strides(shape)
+        return self
 
     @classmethod
     def with_list(cls, data: list, shape: _TensorShape) -> 'Tensor':
@@ -100,3 +126,15 @@ class Tensor(object):
     def _flat_idx(self, key: _TensorTarget) -> int:
         # TODO: This might not hold true for non-rectangular tensors
         return vmath.dot(key, self.strides)  # type: ignore
+
+    def _calculate_strides(self, shape: _TensorShape) -> list[int]:
+        # TODO: Fairly self contained and does not really need to be a
+        # member function
+        num_dims = len(shape)
+        strides = [1] * num_dims
+        for i in range(1, num_dims):
+            prev_dim = shape[num_dims - i]
+            prev_stride = strides[num_dims - i]
+            # reverse order the strides for row-major order
+            strides[num_dims - i - 1] = prev_stride * prev_dim
+        return strides
