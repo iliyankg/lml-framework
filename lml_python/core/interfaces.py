@@ -67,3 +67,17 @@ class ITensor(ABC):
     @abstractmethod
     def with_uniform(cls, shape: TensorShape, low: float, high: float) -> 'ITensor':
         pass
+
+
+class ILayer(ABC):
+    @abstractmethod
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def forward(self, input: ITensor) -> ITensor:
+        pass
+
+    @abstractmethod
+    def backward(self, gradient: ITensor) -> ITensor:
+        pass
