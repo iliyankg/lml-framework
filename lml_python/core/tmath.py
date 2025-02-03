@@ -1,8 +1,10 @@
 from typing import Optional
-from lml_python.core.tensor import Tensor, _TensorShape
+from lml_python.core.interfaces import (
+    ITensor
+)
 
 
-def matadd(a: Tensor, b: Tensor, out: Optional[Tensor] = None) -> Tensor:
+def matadd(a: ITensor, b: ITensor, out: Optional[ITensor] = None) -> ITensor:
     """Simple element-wise addition of two tensors
 
     Demands tensors of the same shape, can optionally be provided with an
@@ -31,7 +33,8 @@ def matadd(a: Tensor, b: Tensor, out: Optional[Tensor] = None) -> Tensor:
         if len(out.data) != len(a.data):
             raise ValueError("Output tensor data length is not aligned")
     else:
-        out = Tensor.with_zeros(shape=a.shape)
+        # TODO: Check for a better way to implement this
+        out = a.__class__.with_zeros(shape=a.shape)
 
     for i in range(len(a.data)):
         out.data[i] = a.data[i] + b.data[i]
@@ -39,7 +42,7 @@ def matadd(a: Tensor, b: Tensor, out: Optional[Tensor] = None) -> Tensor:
     return out
 
 
-def matmul(a: Tensor, b: Tensor, out: Optional[Tensor] = None) -> Tensor:
+def matmul(a: ITensor, b: ITensor, out: Optional[ITensor] = None) -> ITensor:
     """Simple 2D matrix multiplication
 
     Demands 1D or 2D tensors (matrices), can optionally be provided with an
@@ -73,7 +76,7 @@ def matmul(a: Tensor, b: Tensor, out: Optional[Tensor] = None) -> Tensor:
         if len(out.data) != a.shape[0] * b.shape[1]:
             raise ValueError("Output tensor data length is not aligned")
     else:
-        out = Tensor.with_zeros(shape=(a.shape[0], b.shape[1]))
+        out = a.__class__.with_zeros(shape=(a.shape[0], b.shape[1]))
 
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
@@ -85,13 +88,13 @@ def matmul(a: Tensor, b: Tensor, out: Optional[Tensor] = None) -> Tensor:
     return out
 
 
-def tdot(a: Tensor,
-         b: Tensor,
-         axes: int | tuple[_TensorShape, _TensorShape],
-         out: Tensor):
-    # TODO: Next
-    # Process the axes and ensure they are in the expected shape
-    # Validate input tensor shapes are compatible
-    # Calculate output shape and set up output tensor
-    # Compute and set result either to output or as a return value
-    raise NotImplementedError
+# def tdot(a: Tensor,
+#          b: Tensor,
+#          axes: int | tuple[_TensorShape, _TensorShape],
+#          out: Tensor):
+#     # TODO: Next
+#     # Process the axes and ensure they are in the expected shape
+#     # Validate input tensor shapes are compatible
+#     # Calculate output shape and set up output tensor
+#     # Compute and set result either to output or as a return value
+#     raise NotImplementedError

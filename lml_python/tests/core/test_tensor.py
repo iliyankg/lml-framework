@@ -28,8 +28,8 @@ def test_default_constructor_initialization(raw_tensor_data):
     tensor = Tensor(data, shape)
     assert tensor.data == data
     assert tensor.shape == shape
-    assert tensor.rank == rank
-    assert tensor.strides == strides
+    assert tensor._rank == rank
+    assert tensor._strides == strides
 
 
 @pytest.fixture(params=[
@@ -88,8 +88,8 @@ def tensor_data(request):
 def test_tensor_with_iterable(tensor_data):
     data, shape, rank, strides, expected_raw_data, _, _ = tensor_data
     tensor = Tensor.with_list(data, shape)
-    assert tensor.rank == rank
-    assert tensor.strides == strides
+    assert tensor._rank == rank
+    assert tensor._strides == strides
     assert tensor.data == expected_raw_data
     assert tensor.shape == shape
 
@@ -106,8 +106,8 @@ def test_tensor_with_zeros():
     expected_data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     assert tensor.data == expected_data
     assert tensor.shape == shape
-    assert tensor.rank == 2
-    assert tensor.strides == [3, 1]
+    assert tensor._rank == 2
+    assert tensor._strides == [3, 1]
 
 
 @pytest.mark.parametrize("shape, uniform_range", [
@@ -142,3 +142,18 @@ def test_tensor_reshape_various_shapes(initial_shape,
     assert reshaped_tensor.shape == new_shape
     assert reshaped_tensor.data == tensor.data
     assert math.prod(reshaped_tensor.shape) == math.prod(initial_shape)
+
+
+@pytest.mark.parametrize("a_data, a_shape, b_data, b_shape, expected_data, expected_shape", [
+    ([1, 2, 3, 4], (2, 2), [5, 6, 7, 8], (2, 2), [19, 22, 43, 50], (2, 2)),
+    ([1, 2, 3, 4, 5, 6], (2, 3), [7, 8, 9, 10, 11, 12],
+     (3, 2), [58, 64, 139, 154], (2, 2)),
+    ([1, 2, 3, 4, 5, 6], (3, 2), [7, 8, 9, 10],
+     (2, 2), [25, 28, 57, 64, 89, 100], (3, 2)),
+])
+def test_tensor_matmul(a_data, a_shape, b_data, b_shape, expected_data, expected_shape):
+    a = Tensor(a_data, a_shape)
+    b = Tensor(b_data, b_shape)
+    result = a @ b
+    assert result.data == expected_data
+    assert result.shape == expected_shape
