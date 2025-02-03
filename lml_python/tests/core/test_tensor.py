@@ -157,3 +157,15 @@ def test_tensor_matmul(a_data, a_shape, b_data, b_shape, expected_data, expected
     result = a @ b
     assert result.data == expected_data
     assert result.shape == expected_shape
+
+@pytest.mark.parametrize("a_data, a_shape, b_data, b_shape, expected_data, expected_shape", [
+    ([1, 2, 3, 4], (2, 2), [5, 6, 7, 8], (2, 2), [6, 8, 10, 12], (2, 2)),
+    ([1, 2, 3], (3,), [4, 5, 6], (3,), [5, 7, 9], (3,)),
+    ([1, 2, 3, 4, 5, 6], (2, 3), [6, 5, 4, 3, 2, 1], (2, 3), [7, 7, 7, 7, 7, 7], (2, 3)),
+])
+def test_tensor_matadd(a_data, a_shape, b_data, b_shape, expected_data, expected_shape):
+    a = Tensor(a_data, a_shape)
+    b = Tensor(b_data, b_shape)
+    result = a + b
+    assert result.data == expected_data
+    assert result.shape == expected_shape

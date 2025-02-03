@@ -2,7 +2,7 @@ import random
 import itertools
 import math
 import lml_python.core.vmath as vmath
-from lml_python.core.tmath import matmul
+from lml_python.core.tmath import matmul, matadd
 from lml_python.core.interfaces import (
     TensorData,
     TensorShape,
@@ -61,6 +61,30 @@ class Tensor(ITensor):
     strides={self._strides},
     data={self._data})
 """
+
+    def __matmul__(self, other: ITensor) -> ITensor:
+        """Multiplies two tensors together.
+
+        Follows matrix multiplication rules
+
+        Args:
+            other (ITensor): Other tensor
+
+        Returns:
+            ITensor: Product of the two tensors
+        """
+        return matmul(self, other)
+
+    def __add__(self, other: ITensor) -> ITensor:
+        """Adds two tensors together
+
+        Args:
+            other (ITensor): Other tensor
+
+        Returns:
+            ITensor: Sum of the two tensors
+        """
+        return matadd(self, other)
 
     @property
     def shape(self) -> TensorShape:
@@ -137,19 +161,6 @@ class Tensor(ITensor):
         """
         d = [0.0] * math.prod(shape)
         return cls(d, shape)
-
-    def __matmul__(self, other: ITensor) -> ITensor:
-        """Multiplies two tensors together.
-
-        Follows matrix multiplication rules
-
-        Args:
-            other (ITensor): Other tensor
-
-        Returns:
-            ITensor: Product of the two tensors
-        """
-        return matmul(self, other)
 
     def _flat_idx(self, key: TensorTarget) -> int:
         # TODO: This might not hold true for non-rectangular tensors

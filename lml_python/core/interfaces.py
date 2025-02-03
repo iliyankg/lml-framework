@@ -27,6 +27,10 @@ class ITensor(ABC):
         pass
 
     @abstractmethod
+    def __add__(self, other: 'ITensor') -> 'ITensor':
+        pass
+
+    @abstractmethod
     def __repr__(self) -> str:
         pass
 
