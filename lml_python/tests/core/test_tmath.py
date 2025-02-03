@@ -1,6 +1,6 @@
 import pytest
 from lml_python.core.tensor import Tensor
-from lml_python.core.tmath import matmul
+from lml_python.core.tmath import matmul, matadd
 
 
 @pytest.mark.parametrize("a, b, expected", [
@@ -22,4 +22,22 @@ def test_matmul(a, b, expected):
     assert expected == matmul(a, b, out)
     assert expected == out
     assert expected == matmul(a, b)
-    
+
+
+@pytest.mark.parametrize("a, b, expected", [
+    (Tensor.with_list([[1.0, 2.0], [3.0, 4.0]], (2, 2)),
+        Tensor.with_list([[5.0, 6.0], [7.0, 8.0]], (2, 2)),
+        Tensor.with_list([[6.0, 8.0], [10.0, 12.0]], (2, 2))),
+    (Tensor.with_list([[1.0, 2.0, 3.0]], (1, 3)),
+        Tensor.with_list([[4.0, 5.0, 6.0]], (1, 3)),
+        Tensor.with_list([[5.0, 7.0, 9.0]], (1, 3))),
+    (Tensor.with_list([[1.0]], (1, 1)),
+        Tensor.with_list([[2.0]], (1, 1)),
+        Tensor.with_list([[3.0]], (1, 1))),
+])
+def test_addition(a, b, expected):
+    out = Tensor.with_zeros(a.shape)
+    assert expected == matadd(a, b)
+    assert expected == matadd(b, a)
+    assert expected == matadd(a, b, out)
+    assert expected == out

@@ -1,6 +1,42 @@
 from typing import Optional
-from lml_python.core.tensor import Tensor, _TensorShape, _TensorData
-import lml_python.core.vmath as vmath
+from lml_python.core.tensor import Tensor, _TensorShape
+
+
+def matadd(a: Tensor, b: Tensor, out: Optional[Tensor] = None) -> Tensor:
+    """Simple element-wise addition of two tensors
+
+    Demands tensors of the same shape, can optionally be provided with an
+    output tensor.
+    TODO: Broadcast support
+
+    Args:
+         a (Tensor): Left tensor to add
+         b (Tensor): Right tensor to add
+         out (Optional[Tensor], optional): Output tensor to store the 
+            result in. At present out tensor shape and data length must
+            be aligned with the expected output shape and data length.
+            Defaults to None.
+
+    Returns:
+         Tensor: Tensor containing the result of the addition.
+         If 'out' is provided it is mutated and also returned.
+    """
+
+    if a.shape != b.shape:
+        raise ValueError("Shapes are not aligned")
+
+    if out is not None:
+        if out.shape != a.shape:
+            raise ValueError("Output tensor shape is not aligned")
+        if len(out.data) != len(a.data):
+            raise ValueError("Output tensor data length is not aligned")
+    else:
+        out = Tensor.with_zeros(shape=a.shape)
+
+    for i in range(len(a.data)):
+        out.data[i] = a.data[i] + b.data[i]
+
+    return out
 
 
 def matmul(a: Tensor, b: Tensor, out: Optional[Tensor] = None) -> Tensor:
